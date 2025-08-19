@@ -17,6 +17,7 @@ from app.db.base import Base
 class User(Base):
     __tablename__ = "users"
 
+    # --- Columns ---
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     role: Mapped[Role] = mapped_column(Enum(Role, name="role_enum", create_constraint=True), nullable=False)
 
@@ -33,9 +34,21 @@ class User(Base):
     refresh_token_version: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"), onupdate=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=datetime.utcnow,
+    )
 
-    # Relationships (one-to-one)
+    # --- Relationships ---
     regional_manager_profile = relationship("RegionalManagerProfile", back_populates="user", uselist=False)
-    branch_manager_profile = relationship("BranchManagerProfile", back_populates="user", uselist=False)
-    patient_profile = relationship("PatientProfile", back_populates="user", uselist=False)
+    branch_manager_profile   = relationship("BranchManagerProfile",   back_populates="user", uselist=False)
+
+    # Disambiguate which FK in patient_profiles points to this relationship.
+    # patient_profiles has user_id, assigned_bm_user_id, created_by_user_id -> users.id
+    patient_profile = relationship(
+        "PatientProfile",
+        back_populates="user",
+        uselist=False,
+        foreign_keys="PatientProfile.user_id",  # <-- the crucial fix
+    )

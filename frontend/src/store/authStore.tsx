@@ -27,6 +27,16 @@ type Ctx = {
 
 const AuthContext = createContext<Ctx>({} as any);
 
+// Minimal JWT payload decoder (no verification; just UI convenience)
+function decodeJwt<T = any>(token: string): T {
+  try {
+    const [, payload] = token.split(".");
+    return JSON.parse(atob(payload));
+  } catch {
+    return {} as T;
+  }
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<State>({ tokens: getTokens(), me: null });
   const [isBooting, setBooting] = useState(true);
@@ -50,15 +60,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (phone: string, password: string) => {
     const { data } = await AuthApi.login(api, { phone, password });
+
+    // Store tokens immediately
     setTokens(data.access_token, data.refresh_token);
+
+    // If password change is required, DON'T call /me yet (server forbids it until changed).
+    if (data.must_change_password) {
+      const claims = decodeJwt<{ sub?: string; role?: Role }>(data.access_token);
+      const meStub: UserOut = {
+        id: claims.sub ?? "unknown",
+        role: (claims.role ?? "PATIENT") as Role,
+        phone: phone,
+        full_name: null,
+        email: null,
+        is_active: true,
+        must_change_password: true,
+      };
+      setState({ tokens: { accessToken: data.access_token, refreshToken: data.refresh_token }, me: meStub });
+      nav("/change-password", { replace: true });
+      return meStub;
+    }
+
+    // Normal flow: fetch profile then route by role
     setState({ tokens: { accessToken: data.access_token, refreshToken: data.refresh_token }, me: null });
     const me = await refreshMe();
     if (!me) throw new Error("Failed to fetch profile after login.");
-    if (data.must_change_password || me.must_change_password) {
-      nav("/change-password", { replace: true });
-    } else {
-      nav(routeByRole(me.role), { replace: true });
-    }
+    nav(routeByRole(me.role), { replace: true });
     return me;
   };
 
@@ -72,10 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Boot: if tokens exist, try to load /me; otherwise we're done.
     (async () => {
       if (state.tokens?.accessToken) {
-        await refreshMe();
+        await refreshMe().catch(() => {});
       }
       setBooting(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = useMemo(() => ({ state, isBooting, login, logout, refreshMe, routeByRole }), [state, isBooting]);

@@ -6,12 +6,13 @@ import { useState } from "react";
 import { Input, Primary, Label } from "../components/Form";
 import api from "../lib/axios";
 import { useAuth } from "../store/authStore";
+import * as MeApi from "../services/generated/me";
 
 export default function ChangePassword() {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [busy, setBusy] = useState(false);
-  const { state, routeByRole } = useAuth();
+  const { routeByRole } = useAuth();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +20,10 @@ export default function ChangePassword() {
     try {
       await api.post("/auth/change-password", { current_password: current || null, new_password: next });
       alert("Password changed!");
-      const role = state.me?.role ?? "PATIENT";
-      location.href = routeByRole(role as any);
+
+      // After change, server clears must_change_password; now /me works.
+      const { data: me } = await MeApi.getMe(api);
+      location.href = routeByRole(me.role);
     } catch (err: any) {
       alert(err?.response?.data?.detail ?? "Change password failed");
     } finally {
