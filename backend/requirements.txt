@@ -1,0 +1,20 @@
+# Web Framework & Server
+fastapi
+uvicorn[standard]
+
+# ORM & Database
+sqlalchemy
+alembic
+psycopg2-binary
+
+# Data Validation & Settings
+pydantic
+pydantic-settings
+
+# Authentication & Security
+python-jose[cryptography]  # Often used with FastAPI for JWT, more feature-complete than PyJWT
+passlib[bcrypt]
+
+# Utilities
+python-dotenv
+phonenumbers

@@ -1,0 +1,40 @@
+# --- Python / Backend ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+*.env
+.venv/
+migrations/__pycache__/
+
+# --- FastAPI / Alembic ---
+alembic.ini
+migrations/versions/*.pyc
+
+# --- Node / Frontend ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.lock
+*.log
+
+# --- Build / Dist files ---
+dist/
+build/
+*.tsbuildinfo
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Misc ---
+code_reader_02.ps1
+full_folder_and_file_and_code_data.md
+
