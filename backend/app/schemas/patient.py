@@ -1,12 +1,14 @@
 """
 app/schemas/patient.py
 """
+from uuid import UUID
 from datetime import date
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.core.rbac import DonorType, PatientStatus, Gender
 
 
 class PatientBase(BaseModel):
+    # Request fields can remain strings; switching to UUID is optional.
     branch_id: str
     assigned_bm_user_id: str
     rm_approval: bool = False
@@ -70,9 +72,9 @@ class PatientUpdate(BaseModel):
 
 class PatientOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    user_id: str
-    branch_id: str
-    assigned_bm_user_id: str
+    user_id: UUID
+    branch_id: UUID
+    assigned_bm_user_id: UUID
     rm_approval: bool
     enrollment_date: date | None
     transplant_date: date | None

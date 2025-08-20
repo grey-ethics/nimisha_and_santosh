@@ -1,6 +1,7 @@
 """
 app/schemas/region.py
 """
+from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
@@ -10,6 +11,6 @@ class RegionCreate(BaseModel):
 
 class RegionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: str
+    id: UUID
     name: str
     is_active: bool
