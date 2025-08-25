@@ -4,5 +4,5 @@
 
 /* App globals */
 body {
-  @apply bg-office-blue text-office-red-dark;
+  @apply bg-gray-50 text-gray-900;
 }
