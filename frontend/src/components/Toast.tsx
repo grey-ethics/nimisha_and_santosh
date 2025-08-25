@@ -17,7 +17,7 @@ export default function Toast() {
   if (!msg) return null;
   return (
     <div className="fixed bottom-6 inset-x-0 grid place-items-center pointer-events-none">
-      <div className="pointer-events-auto bg-gray-900 text-white px-4 py-2 rounded-xl shadow">{msg}</div>
+      <div className="pointer-events-auto bg-office-blue-dark text-white px-4 py-2 rounded-xl shadow">{msg}</div>
     </div>
   );
 }
