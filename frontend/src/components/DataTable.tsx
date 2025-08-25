@@ -17,13 +17,13 @@ export default function DataTable<T extends object>({
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-left bg-gray-50">
+          <tr className="text-left bg-office-blue text-white">
             {columns.map((c) => <th key={String(c.key)} className="px-3 py-2 font-medium">{c.label}</th>)}
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 && (
-            <tr><td className="px-3 py-6 text-gray-500" colSpan={columns.length}>{empty}</td></tr>
+            <tr><td className="px-3 py-6 text-office-blue-dark" colSpan={columns.length}>{empty}</td></tr>
           )}
           {rows.map((r, i) => (
             <tr key={i} className="border-t">
