@@ -26,7 +26,7 @@ export const Button = ({ children, ...rest }: React.ButtonHTMLAttributes<HTMLBut
 );
 
 export const Primary = ({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <button {...rest} className={`px-4 py-2 rounded-xl shadow bg-office-blue text-white hover:bg-office-blue-dark text-sm ${rest.className ?? ""}`}>
+  <button {...rest} className={`px-4 py-2 rounded-xl shadow bg-blue-600 text-white hover:bg-blue-700 text-sm ${rest.className ?? ""}`}>
     {children}
   </button>
 );
